@@ -1,20 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProviders";
 import BookingRow from "./BookingRow";
+import { useNavigate } from "react-router-dom";
 
 const Bookings = () => {
   const { user } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
-  const url = `http://localhost:5000/checkout?email=${user?.email}`;
+  const navigate = useNavigate();
+  const url = `https://car-doctor-server-five-swart.vercel.app/checkout?email=${user?.email}`;
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("car-doctor-access")}`,
+      },
+    })
       .then((res) => res.json())
-      .then((data) => setBookings(data));
-  }, [url]);
+      .then((data) => {
+        if (!data.error) {
+          setBookings(data);
+        } else {
+          navigate("/");
+        }
+      });
+  }, [url, navigate]);
   const handleDelete = (id) => {
     const proceed = confirm("Are you suret to delete ?");
     if (proceed) {
-      fetch(`http://localhost:5000/checkout/${id}`, {
+      fetch(`https://car-doctor-server-five-swart.vercel.app/checkout/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -29,7 +42,7 @@ const Bookings = () => {
     }
   };
   const handleConfirm = (id) => {
-    fetch(`http://localhost:5000/checkout/${id}`, {
+    fetch(`https://car-doctor-server-five-swart.vercel.app/checkout/${id}`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",

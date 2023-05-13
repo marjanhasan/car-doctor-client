@@ -26,7 +26,7 @@ const CheckOut = () => {
     };
     console.log(order);
 
-    fetch("http://localhost:5000/checkout", {
+    fetch("https://car-doctor-server-five-swart.vercel.app/checkout", {
       method: "POST",
       headers: {
         "content-type": "application/json",
